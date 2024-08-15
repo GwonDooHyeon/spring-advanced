@@ -5,28 +5,30 @@ import spring.advanced.trace.TraceId;
 import spring.advanced.trace.TraceStatus;
 
 @Slf4j
-public class FieldLogTrace implements LogTrace{
+public class ThreadLocalLogTrace implements LogTrace{
 
     private static final String START_PREFIX = "-->";
     private static final String COMPLETE_PREFIX = "<--";
     private static final String EX_PREFIX = "<X-";
 
-    private TraceId traceHolder; // traceId 동기화, 동시성 이슈 발생
+//    private TraceId traceHolder; // traceId 동기화, 동시성 이슈 발생
+    private ThreadLocal<TraceId> traceHolder = new ThreadLocal<>();
 
     @Override
     public TraceStatus begin(String message) {
         syncTraceId();
-        TraceId traceId = traceHolder;
+        TraceId traceId = traceHolder.get();
         long startTimeMs = System.currentTimeMillis();
         log.info("[{}] {}{}", traceId.getId(), addSpace(START_PREFIX, traceId.getLevel()), message);
         return new TraceStatus(traceId, startTimeMs, message);
     }
 
     private void syncTraceId() {
-        if(traceHolder == null) {
-            traceHolder = new TraceId();
+        TraceId traceId = traceHolder.get();
+        if(traceId == null) {
+            traceHolder.set(new TraceId());
         } else{
-            traceHolder = traceHolder.createNextId();
+            traceHolder.set(traceId.createNextId());
         }
     }
 
@@ -54,10 +56,11 @@ public class FieldLogTrace implements LogTrace{
     }
 
     private void releaseTraceId() {
-        if(traceHolder.isFirstLevel()) {
-            traceHolder = null; // destroy
+        TraceId traceId = traceHolder.get();
+        if(traceId.isFirstLevel()) {
+            traceHolder.remove();
         } else{
-            traceHolder = traceHolder.createPreviousId();
+            traceHolder.set(traceId.createPreviousId());
         }
     }
 
