@@ -2,13 +2,10 @@ package spring.advanced.trace.strategy;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
-import spring.advanced.trace.strategy.code.ContextV1;
-import spring.advanced.trace.strategy.code.Strategy;
-import spring.advanced.trace.strategy.code.StrategyLogic1;
-import spring.advanced.trace.strategy.code.StrategyLogic2;
-import spring.advanced.trace.template.code.AbstractTemplate;
-import spring.advanced.trace.template.code.SubClassLogic1;
-import spring.advanced.trace.template.code.SubClassLogic2;
+import spring.advanced.trace.strategy.code.strategy.ContextV1;
+import spring.advanced.trace.strategy.code.strategy.Strategy;
+import spring.advanced.trace.strategy.code.strategy.StrategyLogic1;
+import spring.advanced.trace.strategy.code.strategy.StrategyLogic2;
 
 @Slf4j
 public class ContextV1Test {
